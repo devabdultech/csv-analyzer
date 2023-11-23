@@ -1,4 +1,3 @@
-import tkinter as tk
 from tkinter import filedialog
 import ttkbootstrap as ttk
 from script import calculate_average_largest, time_to_rows
@@ -6,28 +5,28 @@ from script import calculate_average_largest, time_to_rows
 
 class IntervalEntry:
     def __init__(self, master, row, label_text):
-        self.label = tk.Label(master, text=label_text + ":",
-                              font=("Inter", 12), anchor='e')
+        self.label = ttk.Label(master, text=label_text + ":",
+                               anchor='e')
         self.label.grid(row=row, column=0, sticky='e', pady=(10, 5))
 
-        self.start_label = tk.Label(
-            master, text="Start:", font=("Inter", 12), anchor='e')
+        self.start_label = ttk.Label(
+            master, text="Start:", anchor='e')
         self.start_label.grid(row=row, column=1, sticky='e')
 
-        self.start_entry = tk.Entry(master, font=("Inter", 12))
+        self.start_entry = ttk.Entry(master)
         self.start_entry.grid(row=row, column=2, sticky='we')
 
-        self.end_label = tk.Label(
-            master, text="End:", font=("Inter", 12), anchor='e')
+        self.end_label = ttk.Label(
+            master, text="End:", anchor='e')
         self.end_label.grid(row=row, column=3, sticky='e')
 
-        self.end_entry = tk.Entry(master, font=("Inter", 12))
+        self.end_entry = ttk.Entry(master)
         self.end_entry.grid(row=row, column=4, sticky='we')
 
 
 def browse_file():
     file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
-    entry_file_path.delete(0, tk.END)
+    entry_file_path.delete(0, ttk.END)
     entry_file_path.insert(0, file_path)
 
 
@@ -43,59 +42,77 @@ def calculate_and_display():
 
     # Check for missing file
     if not file_path:
-        result_label.config(
-            text="Error: Please select a CSV file.", fg="red")
+        result_label.configure(
+            text="Error: Please select a CSV file.")
+        style = ttk.Style()
+        style.configure("Error.TLabel", font=("Inter", 14), foreground="red")
+        result_label.config(style="Error.TLabel")
         return
 
     # Check for missing or invalid intervals
     for i, (start_time, end_time) in enumerate(intervals, start=1):
         if not start_time or not end_time:
-            result_label.config(
-                text=f"Error: Interval {i} is incomplete.", fg="red")
+            result_label.configure(
+                text=f"Error: Interval {i} is incomplete.")
+            style = ttk.Style()
+            style.configure("Error.TLabel", font=(
+                "Inter", 14), foreground="red")
+            result_label.config(style="Error.TLabel")
             return
         try:
             time_to_rows(start_time)
             time_to_rows(end_time)
         except ValueError:
-            result_label.config(
-                text=f"Error: Invalid format in Interval {i}.", fg="red")
+            result_label.configure(
+                text=f"Error: Invalid format in Interval {i}.")
+            style = ttk.Style()
+            style.configure("Error.TLabel", font=(
+                "Inter", 14), foreground="red")
+            result_label.config(style="Error.TLabel")
             return
 
     # Calculate average largest value
     average_largest = calculate_average_largest(file_path, intervals)
     if average_largest is not None:
-        result_label.config(
-            text=f"Average of 3 Largest Values: {average_largest:.2f}", fg="green")
+        result_label.configure(
+            text=f"Average of 3 Largest Values: {average_largest:.2f}")
+        style = ttk.Style()
+        style.configure("Success.TLabel", font=(
+            "Inter", 14), foreground="green")
+        result_label.config(style="Success.TLabel")
     else:
-        result_label.config(
-            text="Error: No valid values found in the specified intervals.", fg="red")
+        result_label.configure(
+            text="Error: No valid values found in the specified intervals.")
+        style = ttk.Style()
+        style.configure("Error.TLabel", font=("Inter", 14), foreground="red")
+        result_label.config(style="Error.TLabel")
 
 
 if __name__ == "__main__":
-    root = ttk.Window()
+    root = ttk.Window(themename="solar", resizable=[False, False])
     root.geometry("800x500")
     root.title("CSV Data Analyzer")
 
     # Title
-    title_label = tk.Label(root, text="CSV Data Analyzer",
-                           font=("Inter", 18, "bold"), justify="center")
-    title_label.grid(row=0, column=0, columnspan=5, pady=(20, 10))
+    title_label = ttk.Label(root, text="CSV Data Analyzer", font=(
+        "Inter", 20), padding=(0, 20), justify='center')
+    title_label.grid(row=0, column=0, columnspan=20)
 
     # Filepath
-    label_file_path = tk.Label(
-        root, text="Select CSV File:", font=("Inter", 12), anchor='e')
+    label_file_path = ttk.Label(
+        root, text="Select CSV File:", anchor='e')
     label_file_path.grid(row=1, column=0, pady=(10, 5), sticky='e')
 
-    entry_file_path = tk.Entry(root, font=("Inter", 12))
-    entry_file_path.grid(row=1, column=1, columnspan=3, sticky='we')
+    entry_file_path = ttk.Entry(root)
+    entry_file_path.grid(row=1, column=1, columnspan=12, sticky='we')
 
-    button_browse = tk.Button(
-        root, text="Select File", command=browse_file, font=("Inter", 12), cursor="hand2", justify="center")
-    button_browse.grid(row=1, column=4, sticky='w')
+    button_browse = ttk.Button(
+        root, text="Select File", command=browse_file, cursor="hand2")
+    button_browse.grid(row=1, column=13, sticky='w')
 
     # Intervals
-    label_intervals = tk.Label(
-        root, text="Enter 3 Intervals (XX:XX - XX:XX):", font=("Inter", 16, "bold", "underline"))
+    label_intervals = ttk.Label(
+        root, text="Enter 3 Intervals (XX:XX - XX:XX):")
     label_intervals.grid(row=2, column=0, columnspan=5, pady=(10, 5))
 
     # Creating IntervalEntry instances
@@ -104,13 +121,13 @@ if __name__ == "__main__":
     interval3 = IntervalEntry(root, 5, "Interval 3")
 
     # Result
-    result_label = tk.Label(
-        root, text="", font=("Inter", 14), justify="center")
+    result_label = ttk.Label(
+        root, text="", font=("Inter", 14))
     result_label.grid(row=6, column=0, columnspan=5, pady=(20, 10))
 
     # Calculate button
-    button_calculate = tk.Button(
-        root, text="Calculate", command=calculate_and_display, font=("Inter", 15), cursor="hand2", justify="center")
+    button_calculate = ttk.Button(
+        root, text="Calculate", command=calculate_and_display, cursor="hand2")
     button_calculate.grid(row=7, column=0, columnspan=5, pady=14)
 
     # Center all widgets
