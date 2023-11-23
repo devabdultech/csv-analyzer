@@ -6,18 +6,23 @@ from script import calculate_average_largest, time_to_rows
 
 class IntervalEntry:
     def __init__(self, master, row, label_text):
-        self.label = tk.Label(master, text=label_text, font=("Inter", 12))
-        self.label.grid(row=row, column=0, pady=5)
+        self.label = tk.Label(master, text=label_text + ":",
+                              font=("Inter", 12), anchor='e')
+        self.label.grid(row=row, column=0, sticky='e', pady=(10, 5))
+
+        self.start_label = tk.Label(
+            master, text="Start:", font=("Inter", 12), anchor='e')
+        self.start_label.grid(row=row, column=1, sticky='e')
 
         self.start_entry = tk.Entry(master, font=("Inter", 12))
-        self.start_entry.grid(row=row, column=1, pady=5)
+        self.start_entry.grid(row=row, column=2, sticky='we')
 
         self.end_label = tk.Label(
-            master, text=f"{label_text} End Time:", font=("Inter", 12))
-        self.end_label.grid(row=row, column=2, pady=5)
+            master, text="End:", font=("Inter", 12), anchor='e')
+        self.end_label.grid(row=row, column=3, sticky='e')
 
         self.end_entry = tk.Entry(master, font=("Inter", 12))
-        self.end_entry.grid(row=row, column=3, pady=5)
+        self.end_entry.grid(row=row, column=4, sticky='we')
 
 
 def browse_file():
@@ -38,7 +43,8 @@ def calculate_and_display():
 
     # Check for missing file
     if not file_path:
-        result_label.config(text="Error: Please select a CSV file.", fg="red")
+        result_label.config(
+            text="Error: Please select a CSV file.", fg="red")
         return
 
     # Check for missing or invalid intervals
@@ -65,47 +71,53 @@ def calculate_and_display():
             text="Error: No valid values found in the specified intervals.", fg="red")
 
 
-root = ttk.Window()
-root.geometry("800x500")
-root.title("CSV Data Analyzer")
+if __name__ == "__main__":
+    root = ttk.Window()
+    root.geometry("800x500")
+    root.title("CSV Data Analyzer")
 
-# Title
-title_label = tk.Label(root, text="CSV Data Analyzer", font=("Inter", 18))
-title_label.grid(row=0, column=0, columnspan=4, pady=10)
+    # Title
+    title_label = tk.Label(root, text="CSV Data Analyzer",
+                           font=("Inter", 18, "bold"), justify="center")
+    title_label.grid(row=0, column=0, columnspan=5, pady=(20, 10))
 
-# Filepath
-label_file_path = tk.Label(root, text="Select CSV File:", font=("Inter", 12))
-label_file_path.grid(row=1, column=0, padx=10, pady=5)
+    # Filepath
+    label_file_path = tk.Label(
+        root, text="Select CSV File:", font=("Inter", 12), anchor='e')
+    label_file_path.grid(row=1, column=0, pady=(10, 5), sticky='e')
 
-entry_file_path = tk.Entry(root, font=("Inter", 12))
-entry_file_path.grid(row=1, column=1, pady=5, columnspan=2, sticky='we')
+    entry_file_path = tk.Entry(root, font=("Inter", 12))
+    entry_file_path.grid(row=1, column=1, columnspan=3, sticky='we')
 
-button_browse = tk.Button(
-    root, text="Browse", command=browse_file, font=("Inter", 12))
-button_browse.grid(row=1, column=3, pady=5, padx=(10, 0))  # \
+    button_browse = tk.Button(
+        root, text="Select File", command=browse_file, font=("Inter", 12), cursor="hand2", justify="center")
+    button_browse.grid(row=1, column=4, sticky='w')
 
+    # Intervals
+    label_intervals = tk.Label(
+        root, text="Enter 3 Intervals (XX:XX - XX:XX):", font=("Inter", 16, "bold", "underline"))
+    label_intervals.grid(row=2, column=0, columnspan=5, pady=(10, 5))
 
-# Intervals
-label_intervals = tk.Label(
-    root, text="Enter 3 Intervals (XX:XX - XX:XX):", font=("Inter", 18, "bold", "underline"))
-label_intervals.grid(row=2, column=0, pady=(10, 5), columnspan=6, sticky="n")
+    # Creating IntervalEntry instances
+    interval1 = IntervalEntry(root, 3, "Interval 1")
+    interval2 = IntervalEntry(root, 4, "Interval 2")
+    interval3 = IntervalEntry(root, 5, "Interval 3")
 
+    # Result
+    result_label = tk.Label(
+        root, text="", font=("Inter", 14), justify="center")
+    result_label.grid(row=6, column=0, columnspan=5, pady=(20, 10))
 
-# Creating IntervalEntry instances
-interval1 = IntervalEntry(root, 3, "Interval 1")
-interval2 = IntervalEntry(root, 4, "Interval 2")
-interval3 = IntervalEntry(root, 5, "Interval 3")
+    # Calculate button
+    button_calculate = tk.Button(
+        root, text="Calculate", command=calculate_and_display, font=("Inter", 15), cursor="hand2", justify="center")
+    button_calculate.grid(row=7, column=0, columnspan=5, pady=14)
 
-# Result
-result_label = tk.Label(root, text="", font=("Inter", 12))
-result_label.grid(row=6, column=0, columnspan=4, pady=10)
+    # Center all widgets
+    for child in root.winfo_children():
+        child.grid_configure(padx=5, pady=5)
 
-# Calculate button
-button_calculate = tk.Button(
-    root, text="Calculate", command=calculate_and_display, font=("Inter", 15))
-button_calculate.grid(row=7, column=0, columnspan=4, pady=14)
+    # Center the window
+    root.eval('tk::PlaceWindow . center')
 
-# Center the window
-root.eval('tk::PlaceWindow . center')
-
-root.mainloop()
+    root.mainloop()
