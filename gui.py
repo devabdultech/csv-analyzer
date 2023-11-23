@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # Title
     title_label = ttk.Label(root, text="CSV Data Analyzer", font=(
         "Inter", 20), padding=(0, 20), justify='center')
-    title_label.grid(row=0, column=0, columnspan=20)
+    title_label.grid(row=0, column=0, columnspan=5, pady=(10, 5), sticky='we')
 
     # Filepath
     label_file_path = ttk.Label(
@@ -116,16 +116,18 @@ if __name__ == "__main__":
     label_file_path.grid(row=1, column=0, pady=(10, 5), sticky='e')
 
     entry_file_path = ttk.Entry(root)
-    entry_file_path.grid(row=1, column=1, columnspan=12, sticky='we')
+    entry_file_path.grid(row=1, column=1, columnspan=10,
+                         sticky='we', pady=(10, 5))
 
     button_browse = ttk.Button(
         root, text="Select File", command=browse_file, cursor="hand2")
-    button_browse.grid(row=1, column=13, sticky='w')
+    button_browse.grid(row=1, column=11, sticky='w', pady=(10, 5))
 
     # Intervals
     label_intervals = ttk.Label(
-        root, text="Enter 3 Intervals (XX:XX - XX:XX):")
-    label_intervals.grid(row=2, column=0, columnspan=5, pady=(10, 5))
+        root, text="Enter 3 Intervals (XX:XX - XX:XX):", font=("Inter", 14), justify='center')
+    label_intervals.grid(row=2, column=0, columnspan=5,
+                         pady=(10, 5), sticky='w')
 
     # Creating IntervalEntry instances
     interval1 = IntervalEntry(root, 3, "Interval 1")
@@ -138,18 +140,18 @@ if __name__ == "__main__":
 
     # Individual largest values labels
     label_interval1 = ttk.Label(root, text="", font=("Inter", 12))
-    label_interval1.grid(row=7, column=2, pady=(20, 10))
+    label_interval1.grid(row=7, column=0, pady=(20, 10))
 
     label_interval2 = ttk.Label(root, text="", font=("Inter", 12))
-    label_interval2.grid(row=7, column=3, pady=(20, 10))
+    label_interval2.grid(row=7, column=1, pady=(20, 10))
 
     label_interval3 = ttk.Label(root, text="", font=("Inter", 12))
-    label_interval3.grid(row=7, column=4, pady=(20, 10))
+    label_interval3.grid(row=7, column=2, pady=(20, 10))
 
     # Calculate button
     button_calculate = ttk.Button(
         root, text="Calculate", command=calculate_and_display, cursor="hand2")
-    button_calculate.grid(row=8, column=0, columnspan=5, pady=(0, 14))
+    button_calculate.grid(row=8, column=0, pady=(0, 10))
 
     # Center all widgets
     for child in root.winfo_children():
