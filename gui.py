@@ -1,6 +1,6 @@
 from tkinter import filedialog
 import ttkbootstrap as ttk
-from script import calculate_average_largest, time_to_rows
+from script import calculate_average_largest, time_to_rows, find_largest_value
 
 
 class IntervalEntry:
@@ -49,7 +49,7 @@ def calculate_and_display():
         result_label.config(style="Error.TLabel")
         return
 
-    # Check for missing or invalid intervals
+    largest_values = []
     for i, (start_time, end_time) in enumerate(intervals, start=1):
         if not start_time or not end_time:
             result_label.configure(
@@ -62,6 +62,9 @@ def calculate_and_display():
         try:
             time_to_rows(start_time)
             time_to_rows(end_time)
+            largest_value = find_largest_value(
+                file_path, start_time, end_time, 0)
+            largest_values.append(largest_value)
         except ValueError:
             result_label.configure(
                 text=f"Error: Invalid format in Interval {i}.")
@@ -70,6 +73,15 @@ def calculate_and_display():
                 "Inter", 14), foreground="red")
             result_label.config(style="Error.TLabel")
             return
+
+    # Display individual largest values
+    if all(value is not None for value in largest_values):
+        label_interval1.configure(
+            text=f"Interval 1: {largest_values[0]:.2f}")
+        label_interval2.configure(
+            text=f"Interval 2: {largest_values[1]:.2f}")
+        label_interval3.configure(
+            text=f"Interval 3: {largest_values[2]:.2f}")
 
     # Calculate average largest value
     average_largest = calculate_average_largest(file_path, intervals)
@@ -121,14 +133,23 @@ if __name__ == "__main__":
     interval3 = IntervalEntry(root, 5, "Interval 3")
 
     # Result
-    result_label = ttk.Label(
-        root, text="", font=("Inter", 14))
+    result_label = ttk.Label(root, text="", font=("Inter", 14))
     result_label.grid(row=6, column=0, columnspan=5, pady=(20, 10))
+
+    # Individual largest values labels
+    label_interval1 = ttk.Label(root, text="", font=("Inter", 12))
+    label_interval1.grid(row=7, column=2, pady=(20, 10))
+
+    label_interval2 = ttk.Label(root, text="", font=("Inter", 12))
+    label_interval2.grid(row=7, column=3, pady=(20, 10))
+
+    label_interval3 = ttk.Label(root, text="", font=("Inter", 12))
+    label_interval3.grid(row=7, column=4, pady=(20, 10))
 
     # Calculate button
     button_calculate = ttk.Button(
         root, text="Calculate", command=calculate_and_display, cursor="hand2")
-    button_calculate.grid(row=7, column=0, columnspan=5, pady=14)
+    button_calculate.grid(row=8, column=0, columnspan=5, pady=(0, 14))
 
     # Center all widgets
     for child in root.winfo_children():
